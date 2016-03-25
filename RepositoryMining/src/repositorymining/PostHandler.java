@@ -29,7 +29,7 @@ public class PostHandler extends DefaultHandler {
         matches = 0;
         count = 0;
         try {
-            writer = new FileWriter("./out/Posts_CPP_Python");
+            writer = new FileWriter("./out/Posts_CPP_Python.csv");
         } catch (IOException ex) {
             Logger.getLogger(PostHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -50,8 +50,8 @@ public class PostHandler extends DefaultHandler {
                         String key = attributes.getQName(i);
                         result += (i == 0 ? "" : ",") + key;
                     }
+                    result += "\n";
                 }
-                result += "\n";
                 for (int i = 0; i < attributes.getLength(); i++) {
                     String key = attributes.getQName(i);
                     String value = attributes.getValue(i);
