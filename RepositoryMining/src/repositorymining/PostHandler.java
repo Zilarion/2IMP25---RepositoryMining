@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -23,11 +21,13 @@ public class PostHandler extends DefaultHandler {
     private FileWriter writer;
     private int matches;
     private int count;
+    private ArrayList<String> order;
 
     public PostHandler(PageProcessor processor) {
         this.processor = processor;
         matches = 0;
         count = 0;
+        order = new ArrayList<>();
         try {
             writer = new FileWriter("./out/Posts_CPP_Python.csv");
         } catch (IOException ex) {
@@ -49,12 +49,13 @@ public class PostHandler extends DefaultHandler {
                     for (int i = 0; i < attributes.getLength(); i++) {
                         String key = attributes.getQName(i);
                         result += (i == 0 ? "" : ",") + key;
+                        order.add(key);
                     }
                     result += "\n";
                 }
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    String key = attributes.getQName(i);
-                    String value = attributes.getValue(i);
+                for (int i = 0; i < order.size(); i++) {
+                    String key = order.get(i);
+                    String value = attributes.getValue(key);
                     if (key.equals("Body")) {
                         // Remove all code tags
                         value = value.replaceAll("<code>[\\s\\S]*<\\/code>", "");
