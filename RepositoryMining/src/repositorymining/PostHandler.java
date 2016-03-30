@@ -41,9 +41,9 @@ public class PostHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         stringBuilder = new StringBuilder();
         String tags = attributes.getValue("Tags");
-        count++;
         if (tags != null) {
             if (tags.contains("<c++>") || tags.contains("<python>"))  {
+                count++;
                 String result = "";
                 if (matches == 0) {
                     for (int i = 0; i < attributes.getLength(); i++) {
@@ -61,9 +61,9 @@ public class PostHandler extends DefaultHandler {
                         value = value.replaceAll("<code>[\\s\\S]*<\\/code>", "");
                         // Strip all html tags
                         value = value.replaceAll("(?i)<[^>]*>", " ").replaceAll("\\s+", " ").trim();
-                        // Html decode
-                        value = StringUtils.unescapeHtml3(value);
                     }
+                    if (value != null)
+                        value = value.replaceAll("\"", " ");
                     result += (i == 0 ? "" : ",") + "\"" + value + "\"";    
                 }
                 result += "\n";
@@ -85,6 +85,22 @@ public class PostHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 //        System.out.println("--END---");
+    }
+    
+    public static String escapeHTML(String s) {
+        if (s == null) return s;
+        StringBuilder out = new StringBuilder(Math.max(16, s.length()));
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+                out.append("&#");
+                out.append((int) c);
+                out.append(';');
+            } else {
+                out.append(c);
+            }
+        }
+        return out.toString();
     }
     
     @Override
